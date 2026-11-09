@@ -1,0 +1,65 @@
+{
+  "profiles": {
+    "home": {
+      "volume": 70,
+      "dnd": false,
+      "brightness": 60,
+      "wallpaper": "family_photos",
+      "ringtone": "default",
+      "trigger_hours": ["18:30", "08:30"],
+      "trigger_location": [28.6139, 77.2090],
+      "trigger_radius_m": 200
+    },
+    "office": {
+      "volume": 0,
+      "dnd": true,
+      "brightness": 40,
+      "wallpaper": "minimal_dark",
+      "ringtone": "silent",
+      "trigger_hours": ["09:00", "18:00"],
+      "trigger_location": [28.5355, 77.3910],
+      "trigger_radius_m": 300
+    },
+    "transit": {
+      "volume": 40,
+      "dnd": false,
+      "brightness": 50,
+      "wallpaper": "transit_map",
+      "ringtone": "short_buzz"
+    },
+    "sleep": {
+      "volume": 0,
+      "dnd": true,
+      "brightness": 5,
+      "wallpaper": "dark_black",
+      "ringtone": "silent",
+      "trigger_keyword": "goodnight",
+      "alarm_time": "07:00"
+    }
+  },
+  "commute": {
+    "home_coords": [28.6139, 77.2090],
+    "office_coords": [28.5355, 77.3910],
+    "preferred_mode": "transit",
+    "buffer_minutes": 30,
+    "alert_channel": "telegram",
+    "morning_check_time": "07:00"
+  },
+  "notifications": {
+    "starred_contacts": ["Mom", "Boss", "Partner"],
+    "muted_groups": ["Memes", "Random"],
+    "digest_format": "summary",
+    "auto_dismiss_noise": true
+  },
+  "master_slave": {
+    "master_chat_id": "<telegram_id>",
+    "slave_device": "Redmi Note 7",
+    "sync_interval_s": 300,
+    "allow_remote_override": true
+  },
+  "learning": {
+    "profile_overrides": [],
+    "dismissed_patterns": [],
+    "last_updated": "2026-04-24T00:00:00Z"
+  }
+}

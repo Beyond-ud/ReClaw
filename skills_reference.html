@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ReClaw — Skills Reference</title>
+<style>
+  @page { size: A4; margin: 2cm; }
+  body { font-family: 'Segoe UI', sans-serif; color: #222; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+  h1 { color: #00a8cc; border-bottom: 3px solid #00a8cc; padding-bottom: 8px; font-size: 28px; }
+  h2 { color: #0f0f23; margin-top: 30px; font-size: 22px; border-left: 4px solid #00a8cc; padding-left: 12px; }
+  h3 { color: #444; font-size: 16px; margin-top: 20px; }
+  code { background: #f0f4f8; padding: 2px 6px; border-radius: 3px; font-size: 13px; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; line-height: 1.5; }
+  pre code { background: none; padding: 0; color: inherit; }
+  .card { background: #f7f9fc; border: 1px solid #e0e5ec; border-radius: 8px; padding: 16px; margin: 12px 0; }
+  .card-title { font-weight: bold; color: #00a8cc; font-size: 16px; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th { background: #0f0f23; color: white; padding: 10px; text-align: left; font-size: 13px; }
+  td { border: 1px solid #ddd; padding: 8px; font-size: 13px; }
+  tr:nth-child(even) { background: #f7f9fc; }
+  .tag { display: inline-block; background: #00a8cc; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin: 2px; }
+  .page-break { page-break-before: always; }
+  .header-badge { display: inline-block; background: #0f0f23; color: #00d4ff; padding: 4px 12px; border-radius: 4px; font-size: 12px; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<h1>🦞 ReClaw — Skills & Memory Reference</h1>
+<p><strong>ReClaw Framework</strong> | Offline AI Assistant for Android<br>
+<span class="header-badge">PicoClaw (NDK)</span> <span class="header-badge">On-device SLM</span> <span class="header-badge">Multi-Runtime</span> <span class="header-badge">QAT</span></p>
+
+<h2>1. Routine Manager <span class="tag">Core Skill</span></h2>
+<div class="card">
+<div class="card-title">skills/routine-manager/SKILL.md</div>
+<pre><code># Routine Manager
+
+You manage the user's daily phone settings based on context.
+You are proactive — switch profiles automatically without asking.
+
+## Tools Available
+- `device.volume.set` — Set volume level (0-100)
+- `device.dnd.toggle` — Toggle Do Not Disturb mode
+- `device.wallpaper.set` — Change wallpaper from preset pack
+- `device.brightness.set` — Adjust screen brightness (0-100)
+- `device.ringtone.set` — Set ringtone from profile pack
+- `location.get` — Get current GPS coordinates
+- `calendar.upcoming` — Get next N calendar appointments
+- `cron.schedule` — Schedule recurring profile switches
+- `memory.read` — Read stored user preferences
+- `memory.write` — Update learned patterns
+
+## Behavior Rules
+1. At 9:00 AM on weekdays → switch to Office profile
+2. At 6:00 PM on weekdays → switch to Home profile
+3. When GPS enters office geofence → enforce silent mode
+4. When user says "goodnight" or "sleep" → activate Sleep profile
+5. Always confirm profile changes with a summary message
+6. Learn from manual overrides and adjust trigger times
+7. On weekends, default to Home profile all day</code></pre>
+</div>
+
+<h2>2. Commute Planner <span class="tag">Core Skill</span></h2>
+<div class="card">
+<div class="card-title">skills/commute-planner/SKILL.md</div>
+<pre><code># Commute Planner
+
+You help the user never miss a departure by proactively planning commutes.
+You calculate departure times and send alerts before the user needs to leave.
+
+## Tools Available
+- `calendar.upcoming` — Get upcoming appointments with location
+- `location.get` — Get current GPS location
+- `maps.directions` — Query Google Maps for route, ETA, transport mode
+- `maps.traffic` — Get real-time traffic conditions
+- `telegram.send` — Push notification to user's primary phone
+- `whatsapp.send` — Alternative push channel
+- `cron.schedule` — Schedule departure check jobs
+- `memory.read` — Read commute preferences
+
+## Behavior Rules
+1. Every morning at 7:00 AM, check today's calendar
+2. For each appointment with a location:
+   departure_time = event_time - commute_time - buffer_minutes
+3. Push Telegram alert at (departure_time - 15min) with:
+   - Route summary and transport mode
+   - Estimated travel time and ETA
+   - Current traffic conditions
+4. Use emoji for transport: 🚇 metro, 🚌 bus, 🚗 drive, 🚶 walk
+5. If traffic conditions change significantly, send updated alert
+6. Respect user's preferred transport mode from memory</code></pre>
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Smart Customizer <span class="tag">Core Skill</span></h2>
+<div class="card">
+<div class="card-title">skills/smart-customizer/SKILL.md</div>
+<pre><code># Smart Customizer
+
+You create and manage personalized environment packs for the user's phone.
+Each pack is a complete set of visual and audio settings.
+
+## Tools Available
+- `device.wallpaper.set` — Apply wallpaper from pack
+- `device.ringtone.set` — Set ringtone
+- `device.notification_sound.set` — Set notification sound
+- `device.volume.set` — Set volume levels (ring, media, alarm)
+- `device.brightness.set` — Set brightness
+- `device.theme.set` — Toggle dark/light mode
+- `memory.read` — Read saved packs
+- `memory.write` — Save new/modified packs
+
+## Behavior Rules
+1. Maintain at least 4 default packs: Home, Office, Transit, Sleep
+2. When user describes preferences, create a new named pack
+3. Allow mixing: "Use office wallpaper but home volume"
+4. Suggest seasonal or time-based pack variations
+5. Track which packs the user modifies most and optimize
+6. Never change alarm volume without explicit permission</code></pre>
+</div>
+
+<h2>4. Notification Hub <span class="tag">Core Skill</span></h2>
+<div class="card">
+<div class="card-title">skills/notification-hub/SKILL.md</div>
+<pre><code># Notification Hub
+
+You aggregate, prioritize, and summarize notifications for the user.
+You act as a smart filter between the noise and what matters.
+
+## Tools Available
+- `notifications.list` — Get all pending notifications
+- `notifications.summarize` — Use SLM to summarize a batch
+- `notifications.dismiss` — Dismiss low-priority notifications
+- `telegram.send` — Send digest to user
+- `memory.read` — Read priority rules and contact importance
+- `memory.write` — Update learned preferences
+
+## Behavior Rules
+1. When profile switches from DND to normal, send a digest
+2. Categorize notifications: Urgent, Important, Casual, Noise
+3. Urgent: calls, messages from starred contacts, calendar alerts
+4. Summarize group chats: "12 messages in Work Group — topic: deadline"
+5. Never dismiss Urgent notifications automatically
+6. Learn from user's dismiss patterns to improve filtering
+7. Include count and category breakdown in every digest</code></pre>
+</div>
+
+<div class="page-break"></div>
+
+<h2>5. Memory Schema</h2>
+<p>PicoClaw's memory extension persists user preferences and learned routines in a JSON store.</p>
+
+<div class="card">
+<div class="card-title">config/memory.json — Default Structure</div>
+<pre><code>{
+  "profiles": {
+    "home": {
+      "volume": 70, "dnd": false, "brightness": 60,
+      "wallpaper": "family_photos", "ringtone": "default",
+      "trigger_hours": ["18:30", "08:30"],
+      "trigger_location": [28.6139, 77.2090],
+      "trigger_radius_m": 200
+    },
+    "office": {
+      "volume": 0, "dnd": true, "brightness": 40,
+      "wallpaper": "minimal_dark", "ringtone": "silent",
+      "trigger_hours": ["09:00", "18:00"],
+      "trigger_location": [28.5355, 77.3910],
+      "trigger_radius_m": 300
+    },
+    "transit": {
+      "volume": 40, "dnd": false, "brightness": 50,
+      "wallpaper": "transit_map", "ringtone": "short_buzz"
+    },
+    "sleep": {
+      "volume": 0, "dnd": true, "brightness": 5,
+      "wallpaper": "dark_black", "ringtone": "silent",
+      "trigger_keyword": "goodnight",
+      "alarm_time": "07:00"
+    }
+  },
+  "commute": {
+    "home_coords": [28.6139, 77.2090],
+    "office_coords": [28.5355, 77.3910],
+    "preferred_mode": "transit",
+    "buffer_minutes": 30,
+    "alert_channel": "telegram",
+    "morning_check_time": "07:00"
+  },
+  "notifications": {
+    "starred_contacts": ["Mom", "Boss", "Partner"],
+    "muted_groups": ["Memes", "Random"],
+    "digest_format": "summary",
+    "auto_dismiss_noise": true
+  },
+  "learning": {
+    "profile_overrides": [],
+    "dismissed_patterns": [],
+    "last_updated": "2026-04-24T00:00:00Z"
+  }
+}</code></pre>
+</div>
+
+<div class="page-break"></div>
+
+<h2>6. PicoClaw Agent Runtime</h2>
+<p>PicoClaw is <strong>natively compiled via Android NDK</strong> as a lightweight ARM binary. No Go runtime or Termux dependency for the core agent. For more advanced usage, a <strong>proot Linux distro</strong> can be used for easier package management and tool access without requiring root.</p>
+
+<h3>Adaptive Multi-Runtime</h3>
+<p>The app does <strong>NOT</strong> lock into a single inference runtime. On first launch, PicoClaw <strong>benchmarks the device</strong> (RAM, SoC, Android version, available acceleration) to attain a proper configuration, then selects the most suitable runtime:</p>
+<div class="card">
+<div class="card-title">Supported Runtimes</div>
+<table>
+<tr><th>Runtime</th><th>Format</th><th>Best For</th><th>Min RAM</th></tr>
+<tr><td>ExecuTorch</td><td>.pte</td><td>Snapdragon 6xx+ (XNNPACK)</td><td>2GB</td></tr>
+<tr><td>llama.cpp</td><td>.gguf</td><td>Broad ARM64 compatibility</td><td>1.5GB</td></tr>
+<tr><td>PicoLM (forked/customised)</td><td>Custom</td><td>Ultra-constrained (&lt;1GB RAM)</td><td>512MB</td></tr>
+<tr><td>LiteRT</td><td>.tflite</td><td>GPU delegate devices</td><td>1.5GB</td></tr>
+<tr><td>MNN</td><td>.mnn</td><td>MediaTek/Kirin SoCs</td><td>1GB</td></tr>
+</table>
+</div>
+
+<h3>Master-Slave Architecture</h3>
+<p>Alternatively, the app also implements a <strong>master-slave architecture</strong> to allow the old phone to be used actively as a <strong>passive agent</strong>. The old phone (slave) runs PicoClaw autonomously — sensing context, executing skills — while the user's primary phone (master) controls it via Telegram/WhatsApp with zero special apps needed.</p>
+
+<h3>Configuration</h3>
+<div class="card">
+<div class="card-title">config/picoclaw.json</div>
+<pre><code>{
+  "agent": {
+    "model": "local/qwen3-0.6b-reclaw",  // swap to any compatible model
+    "engine": "auto",
+    "benchmark_on_first_run": true,
+    "supported_runtimes": ["executorch", "llamacpp", "picolm", "litert", "mnn"],
+    "model_paths": {
+      "executorch": "/data/local/tmp/llama/model.pte",
+      "llamacpp": "/data/local/tmp/llama/model.gguf",
+      "picolm": "/data/local/tmp/llama/model.picolm"
+    },
+    "tokenizer_path": "/data/local/tmp/llama/tokenizer.json",
+    "model_type": "qwen3",  // adjust for your model family
+    "max_tokens": 512,
+    "temperature": 0.7
+  },
+  "channels": {
+    "telegram": {
+      "botToken": "&lt;YOUR_TELEGRAM_BOT_TOKEN&gt;",
+      "allowFrom": ["*"],
+      "dmPolicy": "open"
+    }
+  },
+  "master_slave": {
+    "enabled": true,
+    "role": "slave",
+    "master_chat_id": "&lt;TELEGRAM_ID&gt;",
+    "sync_interval_s": 300,
+    "allow_remote_override": true
+  },
+  "skills": {
+    "directory": "./skills/",
+    "enabled": [
+      "routine-manager",
+      "commute-planner",
+      "smart-customizer",
+      "notification-hub"
+    ]
+  },
+  "memory": {
+    "enabled": true,
+    "store": "./config/memory.json",
+    "auto_save": true
+  },
+  "proot": {
+    "enabled": false,
+    "distro": "alpine",
+    "note": "Enable for advanced usage — full Linux pkg mgmt without root"
+  },
+  "cron": {
+    "enabled": true,
+    "jobs": [
+      {
+        "name": "morning-commute-check",
+        "schedule": "0 7 * * *",
+        "skill": "commute-planner",
+        "action": "check_today"
+      },
+      {
+        "name": "office-profile",
+        "schedule": "0 9 * * 1-5",
+        "skill": "routine-manager",
+        "action": "switch_profile",
+        "args": { "profile": "office" }
+      },
+      {
+        "name": "home-profile",
+        "schedule": "0 18 * * 1-5",
+        "skill": "routine-manager",
+        "action": "switch_profile",
+        "args": { "profile": "home" }
+      }
+    ]
+  }
+}</code></pre>
+</div>
+
+<h2>7. API Dependencies</h2>
+<table>
+<tr><th>API</th><th>Tier</th><th>Used By</th><th>Purpose</th></tr>
+<tr><td>Telegram Bot API</td><td>Free</td><td>All skills</td><td>User messaging & alerts</td></tr>
+<tr><td>Google Maps Directions</td><td>Free (2500/day)</td><td>Commute Planner</td><td>Route & ETA calculation</td></tr>
+<tr><td>Google Calendar API</td><td>Free</td><td>Commute Planner, Routine Manager</td><td>Appointment reading</td></tr>
+<tr><td>OpenWeatherMap</td><td>Free (optional)</td><td>Smart Customizer</td><td>Weather-aware profiles</td></tr>
+<tr><td>Termux:API</td><td>Local</td><td>All device.* tools</td><td>Android hardware access</td></tr>
+</table>
+
+<hr>
+<p style="text-align:center; color:#888; font-size:12px;">
+  ReClaw — ReClaw Open Source Project<br>
+  Generated: April 24, 2026
+</p>
+
+</body>
+</html>

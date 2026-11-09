@@ -1,0 +1,122 @@
+# ═══════════════════════════════════════════════════════════
+#  PicoClaw — Android NDK Cross-Compilation Makefile
+# ═══════════════════════════════════════════════════════════
+#
+#  Compiles PicoClaw as a native ARM64 binary for Android.
+#  No Go runtime or Termux dependency — just the binary.
+#
+#  Prerequisites:
+#    - Android NDK r26+ (set ANDROID_NDK env var)
+#    - Go 1.22+
+#    - CGO enabled (for runtime FFI bindings)
+#
+#  Usage:
+#    make -f Makefile.ndk build        # Build for Android ARM64
+#    make -f Makefile.ndk push         # Push to connected device via ADB
+#    make -f Makefile.ndk run          # Push and start on device
+#    make -f Makefile.ndk clean        # Remove build artifacts
+#
+# ═══════════════════════════════════════════════════════════
+
+# NDK Configuration
+ANDROID_NDK      ?= $(HOME)/Android/Sdk/ndk/26.1.10909125
+ANDROID_API      ?= 30
+TARGET_ARCH      ?= arm64
+NDK_TOOLCHAIN    := $(ANDROID_NDK)/toolchains/llvm/prebuilt/linux-x86_64
+CC_ARM64         := $(NDK_TOOLCHAIN)/bin/aarch64-linux-android$(ANDROID_API)-clang
+CXX_ARM64        := $(NDK_TOOLCHAIN)/bin/aarch64-linux-android$(ANDROID_API)-clang++
+AR_ARM64         := $(NDK_TOOLCHAIN)/bin/llvm-ar
+
+# Go Configuration
+GOOS             := android
+GOARCH           := arm64
+CGO_ENABLED      := 1
+
+# Build Configuration
+BINARY_NAME      := picoclaw-android
+BUILD_DIR        := ./build
+VERSION          := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+LDFLAGS          := -s -w -X main.Version=$(VERSION)
+
+# Device paths
+DEVICE_DIR       := /data/local/tmp
+DEVICE_BIN       := $(DEVICE_DIR)/$(BINARY_NAME)
+DEVICE_CONFIG    := $(DEVICE_DIR)/picoclaw.json
+DEVICE_SKILLS    := $(DEVICE_DIR)/skills
+DEVICE_MODEL_DIR := $(DEVICE_DIR)/llama
+
+# ───────────────────────────────────────────────────────────
+
+.PHONY: build push run clean check-ndk setup-device
+
+## build: Cross-compile PicoClaw for Android ARM64
+build: check-ndk
+	@echo "🦞 Building PicoClaw for Android ARM64..."
+	@mkdir -p $(BUILD_DIR)
+	CGO_ENABLED=$(CGO_ENABLED) \
+	GOOS=$(GOOS) \
+	GOARCH=$(GOARCH) \
+	CC=$(CC_ARM64) \
+	CXX=$(CXX_ARM64) \
+	AR=$(AR_ARM64) \
+	go build \
+		-ldflags="$(LDFLAGS)" \
+		-o $(BUILD_DIR)/$(BINARY_NAME) \
+		./cmd/picoclaw
+	@echo "✅ Built: $(BUILD_DIR)/$(BINARY_NAME)"
+	@ls -lh $(BUILD_DIR)/$(BINARY_NAME)
+
+## push: Push binary, config, and skills to connected Android device
+push: build
+	@echo "📲 Pushing to device..."
+	adb push $(BUILD_DIR)/$(BINARY_NAME) $(DEVICE_BIN)
+	adb shell chmod +x $(DEVICE_BIN)
+	adb push ../config/picoclaw.json $(DEVICE_CONFIG)
+	adb push ../skills $(DEVICE_SKILLS)
+	@echo "✅ Pushed to $(DEVICE_DIR)"
+
+## run: Push and start PicoClaw on the device
+run: push
+	@echo "🚀 Starting PicoClaw on device..."
+	adb shell $(DEVICE_BIN) start \
+		--config $(DEVICE_CONFIG) \
+		--skills $(DEVICE_SKILLS)/
+
+## benchmark: Run device benchmark on the connected phone
+benchmark: push
+	@echo "🔍 Running device benchmark..."
+	adb shell $(DEVICE_BIN) benchmark
+
+## setup-device: Create directory structure on device
+setup-device:
+	@echo "📁 Setting up device directories..."
+	adb shell mkdir -p $(DEVICE_DIR)
+	adb shell mkdir -p $(DEVICE_MODEL_DIR)
+	adb shell mkdir -p $(DEVICE_SKILLS)
+	@echo "✅ Device directories ready"
+	@echo ""
+	@echo "Next steps:"
+	@echo "  1. Push model:  adb push model.gguf $(DEVICE_MODEL_DIR)/"
+	@echo "  2. Build:       make -f Makefile.ndk build"
+	@echo "  3. Run:         make -f Makefile.ndk run"
+
+## check-ndk: Verify Android NDK is available
+check-ndk:
+	@if [ ! -d "$(ANDROID_NDK)" ]; then \
+		echo "❌ Android NDK not found at: $(ANDROID_NDK)"; \
+		echo "   Set ANDROID_NDK env var to your NDK installation path."; \
+		echo "   Download: https://developer.android.com/ndk/downloads"; \
+		exit 1; \
+	fi
+	@echo "✅ NDK found: $(ANDROID_NDK)"
+
+## clean: Remove build artifacts
+clean:
+	@rm -rf $(BUILD_DIR)
+	@echo "🧹 Cleaned build directory"
+
+## help: Show this help
+help:
+	@echo "PicoClaw NDK Build System"
+	@echo "═══════════════════════════════════════"
+	@grep -E '^## ' Makefile.ndk | sed 's/## /  /'

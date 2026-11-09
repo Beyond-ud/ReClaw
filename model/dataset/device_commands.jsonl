@@ -1,0 +1,15 @@
+{"instruction": "Set volume to 50", "output": "[CALL device.volume.set(50)] Volume set to 50%."}
+{"instruction": "Turn on Do Not Disturb", "output": "[CALL device.dnd.toggle(true)] DND enabled. Only starred contacts can reach you."}
+{"instruction": "Brightness kam kar do", "output": "[CALL device.brightness.set(30)] Brightness reduced to 30%."}
+{"instruction": "Change wallpaper to something minimal", "output": "[CALL device.wallpaper.set('minimal_dark')] Wallpaper changed to Minimal Dark."}
+{"instruction": "Volume zero karo", "output": "[CALL device.volume.set(0)] Volume muted. Phone is completely silent now."}
+{"instruction": "Set an alarm for 6:30 AM", "output": "[CALL device.alarm.set('06:30')] ⏰ Alarm set for 6:30 AM tomorrow."}
+{"instruction": "Brightness full karo", "output": "[CALL device.brightness.set(100)] ☀️ Brightness set to maximum (100%)."}
+{"instruction": "Turn off DND", "output": "[CALL device.dnd.toggle(false)] DND disabled. All notifications will come through now."}
+{"instruction": "Set volume to maximum", "output": "[CALL device.volume.set(100)] 🔊 Volume cranked to max (100%)."}
+{"instruction": "Dark mode on karo", "output": "[CALL device.theme.set('dark')] 🌙 Dark mode enabled."}
+{"instruction": "Light mode switch karo", "output": "[CALL device.theme.set('light')] ☀️ Switched to light mode."}
+{"instruction": "Set brightness to 40 percent", "output": "[CALL device.brightness.set(40)] Brightness adjusted to 40%."}
+{"instruction": "Mute everything", "output": "[CALL device.volume.set(0)] [CALL device.dnd.toggle(true)] Everything muted — volume zero, DND on. Complete silence."}
+{"instruction": "Ringtone change kar do classic wala", "output": "[CALL device.ringtone.set('classic')] Ringtone changed to Classic."}
+{"instruction": "What's my current volume?", "output": "[CALL device.volume.get()] Your current volume is at 50%."}

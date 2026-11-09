@@ -1,0 +1,23 @@
+# Swap files
+*.swp
+*.kate-swp
+*.swo
+*~
+
+# Model weights (too large for GitHub)
+*.gguf
+*.pte
+*.tflite
+*.mnn
+*.bin
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Videos (too large for Git)
+demo/videos/

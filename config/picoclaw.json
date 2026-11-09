@@ -1,0 +1,88 @@
+{
+  "agent": {
+    "model": "local/qwen3-0.6b-reclaw",
+    "engine": "auto",
+    "benchmark_on_first_run": true,
+    "supported_runtimes": ["executorch", "llamacpp", "picolm", "litert", "mnn"],
+    "model_paths": {
+      "executorch": "/data/local/tmp/llama/model.pte",
+      "llamacpp": "/data/local/tmp/llama/model.gguf",
+      "picolm": "/data/local/tmp/llama/model.picolm",
+      "litert": "/data/local/tmp/llama/model.tflite",
+      "mnn": "/data/local/tmp/llama/model.mnn"
+    },
+    "tokenizer_path": "/data/local/tmp/llama/tokenizer.json",
+    "model_type": "qwen3",
+    "max_tokens": 512,
+    "temperature": 0.7
+  },
+  "channels": {
+    "telegram": {
+      "botToken": "<YOUR_TELEGRAM_BOT_TOKEN>",
+      "allowFrom": ["*"],
+      "dmPolicy": "open"
+    }
+  },
+  "master_slave": {
+    "enabled": true,
+    "role": "slave",
+    "master_chat_id": "<TELEGRAM_CHAT_ID>",
+    "sync_interval_s": 300,
+    "allow_remote_override": true
+  },
+  "skills": {
+    "directory": "./skills/",
+    "enabled": [
+      "routine-manager",
+      "commute-planner",
+      "smart-customizer",
+      "notification-hub"
+    ]
+  },
+  "memory": {
+    "enabled": true,
+    "store": "./config/memory.json",
+    "auto_save": true
+  },
+  "device_bridge": {
+    "enabled": true,
+    "host": "127.0.0.1",
+    "port": 8421
+  },
+  "proot": {
+    "enabled": false,
+    "distro": "alpine",
+    "note": "Enable for advanced usage — full Linux pkg mgmt without root"
+  },
+  "cron": {
+    "enabled": true,
+    "jobs": [
+      {
+        "name": "morning-commute-check",
+        "schedule": "0 7 * * *",
+        "skill": "commute-planner",
+        "action": "check_today"
+      },
+      {
+        "name": "office-profile",
+        "schedule": "0 9 * * 1-5",
+        "skill": "routine-manager",
+        "action": "switch_profile",
+        "args": { "profile": "office" }
+      },
+      {
+        "name": "home-profile",
+        "schedule": "0 18 * * 1-5",
+        "skill": "routine-manager",
+        "action": "switch_profile",
+        "args": { "profile": "home" }
+      },
+      {
+        "name": "evening-digest",
+        "schedule": "0 20 * * *",
+        "skill": "notification-hub",
+        "action": "send_digest"
+      }
+    ]
+  }
+}
